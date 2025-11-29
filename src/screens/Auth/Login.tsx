@@ -20,10 +20,8 @@ const brandLogo = require("../../../assets/logo.png");
 
 export default function Login({
   onSignup,
-  onLoggedIn,
 }: {
   onSignup?: () => void;
-  onLoggedIn?: () => void;
 }) {
   const navigation = useNavigation<any>();
 
@@ -39,8 +37,7 @@ export default function Login({
 
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      onLoggedIn?.();
-      navigation.replace("Home");
+      // Auth state will automatically update and trigger navigator switch
     } catch (error: any) {
       Alert.alert("Login Failed", error.message || "Unable to sign in");
     }

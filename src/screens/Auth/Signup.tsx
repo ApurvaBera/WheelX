@@ -41,7 +41,7 @@ export default function Signup({ onLogin }: { onLogin: () => void }) {
       const result = await createUserWithEmailAndPassword(auth, email.trim(), password);
       await updateProfile(result.user, { displayName: name });
       Alert.alert("Success", "Account created successfully");
-      navigation.replace("Home");
+      // Auth state will automatically update and trigger navigator switch
     } catch (error: any) {
       Alert.alert("Signup Failed", error.message);
     }
