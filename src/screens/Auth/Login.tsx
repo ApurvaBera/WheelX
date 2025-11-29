@@ -42,7 +42,7 @@ export default function Login({
       onLoggedIn?.();
       navigation.replace("Home");
     } catch (error: any) {
-      Alert.alert("Login Failed","Unable to sign in");
+      Alert.alert("Login Failed", error.message || "Unable to sign in");
     }
   };
 

@@ -43,7 +43,7 @@ export default function Signup({ onLogin }: { onLogin: () => void }) {
       Alert.alert("Success", "Account created successfully");
       navigation.replace("Home");
     } catch (error: any) {
-      Alert.alert("Signup Failed", "Email already in use");
+      Alert.alert("Signup Failed", error.message);
     }
   };
 
@@ -128,13 +128,7 @@ const styles = StyleSheet.create({
   },
   panelContent: { width: "100%", maxWidth: 400, padding: 24, gap: 12 },
   brandLogo: { width: 180, height: 80, alignSelf: "center" },
-  title: {
-    fontSize: 24,
-    fontWeight: "700",
-    textAlign: "center",
-    color: "#000",  
-    marginBottom: 8
-  },
+  title: { fontSize: 24, fontWeight: "700", textAlign: "center", color: "#fff", marginBottom: 8 },
   input: {
     borderWidth: 1,
     borderColor: "rgba(209,213,219,0.5)",
@@ -167,9 +161,6 @@ const styles = StyleSheet.create({
   googleButtonText: { color: "#1F2937", fontWeight: "500", fontSize: 16 },
   googleLogo: { width: 20, height: 20 },
   loginContainer: { flexDirection: "row", justifyContent: "center", marginTop: 16 },
-  loginText: {
-    color: "#000",  
-    fontSize: 14
-  },
+  loginText: { color: "#fff", fontSize: 14 },
   loginLink: { color: "#e53935", fontSize: 14, fontWeight: "600" }
 });
