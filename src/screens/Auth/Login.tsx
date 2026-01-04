@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
-  Alert,
+  Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,11 +18,7 @@ const backgroundImage = require("../../../assets/bg.png");
 const googleLogo = require("../../../assets/google.png");
 const brandLogo = require("../../../assets/logo.png");
 
-export default function Login({
-  onSignup,
-}: {
-  onSignup?: () => void;
-}) {
+export default function Login({ onSignup }: { onSignup?: () => void }) {
   const navigation = useNavigation<any>();
 
   const [email, setEmail] = useState("");
@@ -37,7 +33,6 @@ export default function Login({
 
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
-      // Auth state will automatically update and trigger navigator switch
     } catch (error: any) {
       Alert.alert("Login Failed", error.message || "Unable to sign in");
     }
@@ -86,7 +81,7 @@ export default function Login({
             <Text style={styles.primaryText}>Log In</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.googleButton}>
+          <TouchableOpacity style={styles.googleButton} onPress={() => Alert.alert("Coming Soon", "Google sign-in will be available soon")}>
             <View style={styles.googleButtonContent}>
               <Image source={googleLogo} style={styles.googleLogo} />
               <Text style={styles.googleButtonText}>Continue with Google</Text>
@@ -113,26 +108,26 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
     padding: 20,
-    paddingBottom: 80,
+    paddingBottom: 80
   },
   panelContent: {
     width: "100%",
     maxWidth: 400,
     padding: 24,
-    gap: 12,
+    gap: 12
   },
   brandLogo: {
     width: 180,
     height: 80,
     alignSelf: "center",
-    marginBottom: 4,
+    marginBottom: 4
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     marginBottom: 8,
     textAlign: "center",
-    color: "#000",   
+    color: "#000"
   },
   input: {
     borderWidth: 1,
@@ -141,14 +136,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-    color: "#1F2937",
+    color: "#1F2937"
   },
   primaryButton: {
     backgroundColor: "#e53935",
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 8
   },
   primaryText: { color: "#fff", fontWeight: "600" },
   googleButton: {
@@ -157,35 +152,35 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 12,
     marginTop: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backgroundColor: "rgba(255, 255, 255, 0.8)"
   },
   googleButtonContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: 8
   },
   googleButtonText: {
     color: "#1F2937",
     fontWeight: "500",
-    fontSize: 16,
+    fontSize: 16
   },
   googleLogo: { width: 20, height: 20, resizeMode: "contain" },
   loginContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 16,
+    marginTop: 16
   },
-  loginText: { 
-    color: "#000",   
-    fontSize: 14 
+  loginText: {
+    color: "#000",
+    fontSize: 14
   },
   loginLink: {
     color: "#e53935",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "600"
   },
   passwordWrapper: { width: "100%", position: "relative" },
-  eyeIcon: { position: "absolute", right: 15, top: 15 },
+  eyeIcon: { position: "absolute", right: 15, top: 15 }
 });

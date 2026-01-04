@@ -10,9 +10,12 @@ import {
   Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { auth } from "../../../firebaseConfig";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../../../firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile
+} from "firebase/auth";
 
 const backgroundImage = require("../../../assets/bg.png");
 const googleLogo = require("../../../assets/google.png");
@@ -41,7 +44,6 @@ export default function Signup({ onLogin }: { onLogin: () => void }) {
       const result = await createUserWithEmailAndPassword(auth, email.trim(), password);
       await updateProfile(result.user, { displayName: name });
       Alert.alert("Success", "Account created successfully");
-      // Auth state will automatically update and trigger navigator switch
     } catch (error: any) {
       Alert.alert("Signup Failed", error.message);
     }
@@ -97,7 +99,7 @@ export default function Signup({ onLogin }: { onLogin: () => void }) {
             <Text style={styles.primaryText}>Sign Up</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.googleButton}>
+          <TouchableOpacity style={styles.googleButton} onPress={() => Alert.alert("Coming Soon", "Google sign-up will be available soon")}>
             <View style={styles.googleButtonContent}>
               <Image source={googleLogo} style={styles.googleLogo} />
               <Text style={styles.googleButtonText}>Continue with Google</Text>
