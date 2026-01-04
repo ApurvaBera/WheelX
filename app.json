@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "WheelX",
     "slug": "mobile",
+    "scheme": "wheelx",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,22 +10,31 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.wheelx.app"
     },
     "android": {
+      "package": "com.wheelx.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2441db3b-6dee-46fe-8408-5f0811c4f345"
+      }
+    },
+    "owner": "apurvabera",
+    "plugins": [
+      "expo-web-browser"
+    ]
   }
 }

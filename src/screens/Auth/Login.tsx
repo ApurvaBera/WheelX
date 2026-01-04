@@ -9,21 +9,49 @@ import {
   Image,
   Alert
 } from "react-native";
+import * as Location from "expo-location";
+import { supabase } from "../../supabase";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { auth } from "../../../firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useAuth } from "../../context/AuthContext";
 
 const backgroundImage = require("../../../assets/bg.png");
 const googleLogo = require("../../../assets/google.png");
 const brandLogo = require("../../../assets/logo.png");
 
-export default function Login({ onSignup }: { onSignup?: () => void }) {
+export default function Login({ onSignup, route }: { onSignup?: () => void; route?: any }) {
   const navigation = useNavigation<any>();
+  const { login, googleLogin } = useAuth();
 
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const saveUserLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+
+      const pos = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) return;
+
+      await supabase.from("profiles").upsert({
+        id: userData.user.id,
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        updated_at: new Date(),
+      });
+    } catch (err) {
+      console.log("Location save failed", err);
+    }
+  };
+
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -32,9 +60,30 @@ export default function Login({ onSignup }: { onSignup?: () => void }) {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      await login(email.trim(), password);
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      console.log("AUTH USER:", authData?.user);
+      if (!authData?.user) {
+        console.log("NO USER SESSION");
+        return;
+      }
+      const { error } = await supabase.from("profiles").upsert({
+        id: authData.user.id,
+        phone: phone,
+      });
+      console.log("UPSERT ERROR:", error);
+    } catch (e: any) {
+      Alert.alert("Login Failed", e.message);
+    }
+  };
+
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+      await saveUserLocation();
     } catch (error: any) {
-      Alert.alert("Login Failed", error.message || "Unable to sign in");
+      Alert.alert("Google Login Failed", error.message || "Unable to login");
     }
   };
 
@@ -49,6 +98,15 @@ export default function Login({ onSignup }: { onSignup?: () => void }) {
         <View style={styles.panelContent}>
           <Image source={brandLogo} style={styles.brandLogo} resizeMode="contain" />
           <Text style={styles.title}>Welcome Back</Text>
+
+          <TextInput
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="Phone Number"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="phone-pad"
+            style={styles.input}
+          />
 
           <TextInput
             value={email}
@@ -81,7 +139,7 @@ export default function Login({ onSignup }: { onSignup?: () => void }) {
             <Text style={styles.primaryText}>Log In</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.googleButton} onPress={() => Alert.alert("Coming Soon", "Google sign-in will be available soon")}>
+          <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
             <View style={styles.googleButtonContent}>
               <Image source={googleLogo} style={styles.googleLogo} />
               <Text style={styles.googleButtonText}>Continue with Google</Text>

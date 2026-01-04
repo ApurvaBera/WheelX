@@ -5,7 +5,7 @@ export interface BikeItem {
   name: string;
   price: number;
   location: string;
-  image: string; // remote url
+  image: string;
 }
 
 export default function BikeCard({ item, onPress }: { item: BikeItem; onPress: () => void }) {
