@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
   Image,
   Switch,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { scale, verticalScale, moderateScale, rf, SCREEN_WIDTH } from "../utils/responsive";
+
+const width = SCREEN_WIDTH;
 
 export default function Profile() {
   const navigation = useNavigation<any>();
@@ -26,109 +30,133 @@ export default function Profile() {
     border: isDark ? "#374151" : "#F3F4F6",
   };
 
+  interface MenuItem {
+    label: string;
+    icon: string;
+    route?: string;
+    color: string;
+    type?: string;
+  }
+
+  interface MenuSection {
+    title: string;
+    items: MenuItem[];
+  }
+
+  const menuSections: MenuSection[] = [
+    {
+      title: "Account Settings",
+      items: [
+        { label: "Edit Profile", icon: "create-outline", route: "EditProfile", color: "#e53935" },
+      ]
+    },
+    {
+      title: "Preferences",
+      items: [
+        { label: "Dark Theme", icon: "moon-outline", type: "switch", color: "#e53935" },
+      ]
+    },
+    {
+      title: "Support",
+      items: [
+        { label: "Help & Support", icon: "help-circle-outline", route: "HelpSupport", color: "#e53935" },
+        { label: "About WheelX", icon: "information-circle-outline", route: "AboutUs", color: "#e53935" },
+      ]
+    }
+  ];
+
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
       <View style={styles.header}>
-        <View style={{ width: 28 }} />
         <Image
           source={require("../../assets/logo3.png")}
           style={styles.logo}
           resizeMode="contain"
         />
-        <View style={{ width: 28 }} />
       </View>
 
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.profileBox, { backgroundColor: colors.card }]}>
-          <View style={styles.avatar}>
-            <Ionicons name="person" size={42} color="#fff" />
+        <View style={[styles.profileCard, { backgroundColor: colors.card }]}>
+          <View style={styles.profileInfoArea}>
+            <View style={styles.avatarWrapper}>
+              <View style={styles.avatar}>
+                <Ionicons name="person" size={48} color="#fff" />
+              </View>
+            </View>
+            <View style={styles.profileTexts}>
+              <Text style={[styles.name, { color: colors.text }]}>
+                {user?.name || "WheelX User"}
+              </Text>
+              <View style={styles.emailBadge}>
+                <Text style={[styles.email, { color: isDark ? "#9CA3AF" : "#6B7280" }]}>
+                  {user?.email || "user@wheelx.com"}
+                </Text>
+              </View>
+            </View>
           </View>
-
-          <Text style={[styles.name, { color: colors.text }]}>
-            {user?.name || "User"}
-          </Text>
-          <Text style={[styles.email, { color: colors.subText }]}>
-            {user?.email || ""}
-          </Text>
-
         </View>
 
-        <View style={[styles.card, { backgroundColor: colors.card }]}>
-          <TouchableOpacity
-            style={[styles.row, { borderBottomColor: colors.border }]}
-            onPress={() => navigation.navigate("EditProfile")}
-          >
-            <View style={styles.rowLeft}>
-              <Ionicons name="create-outline" size={22} color="#e53935" />
-              <Text style={[styles.rowText, { color: colors.text }]}>
-                Edit Profile
-              </Text>
+        {menuSections.map((section, sIdx) => (
+          <View key={sIdx} style={styles.sectionContainer}>
+            <Text style={[styles.sectionTitle, { color: colors.subText }]}>{section.title}</Text>
+            <View style={[styles.menuCard, { backgroundColor: colors.card }]}>
+              {section.items.map((item, iIdx) => (
+                <View key={iIdx}>
+                  {item.type === "switch" ? (
+                    <View style={styles.menuRow}>
+                      <View style={styles.rowLeft}>
+                        <View style={[styles.iconBox, { backgroundColor: item.color + "15" }]}>
+                          <Ionicons name={item.icon as any} size={20} color={item.color} />
+                        </View>
+                        <Text style={[styles.rowText, { color: colors.text }]}>{item.label}</Text>
+                      </View>
+                      <Switch
+                        value={isDark}
+                        onValueChange={toggleTheme}
+                        trackColor={{ false: "#d1d5db", true: "#e5393555" }}
+                        thumbColor={isDark ? "#e53935" : "#f4f4f5"}
+                      />
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.menuRow}
+                      onPress={() => item.route && navigation.navigate(item.route)}
+                    >
+                      <View style={styles.rowLeft}>
+                        <View style={[styles.iconBox, { backgroundColor: item.color + "15" }]}>
+                          <Ionicons name={item.icon as any} size={20} color={item.color} />
+                        </View>
+                        <Text style={[styles.rowText, { color: colors.text }]}>{item.label}</Text>
+                      </View>
+                      <Ionicons name="chevron-forward" size={18} color={colors.subText + "88"} />
+                    </TouchableOpacity>
+                  )}
+                  {iIdx < section.items.length - 1 && (
+                    <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                  )}
+                </View>
+              ))}
             </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.subText} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.row, { borderBottomColor: colors.border }]}
-            onPress={() => navigation.navigate("MyListings")}
-          >
-            <View style={styles.rowLeft}>
-              <Ionicons name="list-outline" size={22} color="#e53935" />
-              <Text style={[styles.rowText, { color: colors.text }]}>
-                My Listings
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.subText} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.row, { borderBottomColor: colors.border }]}
-            onPress={() => navigation.navigate("Fav")}
-          >
-            <View style={styles.rowLeft}>
-              <Ionicons name="heart-outline" size={22} color="#e53935" />
-              <Text style={[styles.rowText, { color: colors.text }]}>
-                Favorites
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.subText} />
-          </TouchableOpacity>
-
-          <View style={[styles.row, { borderBottomColor: colors.border }]}>
-            <View style={styles.rowLeft}>
-              <Ionicons name="moon-outline" size={22} color="#e53935" />
-              <Text style={[styles.rowText, { color: colors.text }]}>
-                Dark Theme
-              </Text>
-            </View>
-            <Switch
-              value={isDark}
-              onValueChange={toggleTheme}
-              trackColor={{ false: "#d1d5db", true: "#374151" }}
-              thumbColor={isDark ? "#e53935" : "#f4f4f5"}
-            />
           </View>
+        ))}
 
-          <TouchableOpacity
-            style={[styles.row, { borderBottomColor: colors.border }]}
-            onPress={() => navigation.navigate("HelpSupport")}
-          >
-            <View style={styles.rowLeft}>
-              <Ionicons name="help-circle-outline" size={22} color="#e53935" />
-              <Text style={[styles.rowText, { color: colors.text }]}>
-                Help & Support
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.subText} />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-          <Ionicons name="log-out-outline" size={20} color="#fff" />
-          <Text style={styles.logoutText}>Log Out</Text>
+        <TouchableOpacity
+          style={styles.logoutBtn}
+          onPress={logout}
+          activeOpacity={0.8}
+        >
+          <View style={styles.logoutIconBox}>
+            <Ionicons name="power" size={18} color="#fff" />
+          </View>
+          <Text style={styles.logoutText}>Sign Out</Text>
         </TouchableOpacity>
+
+        <View style={styles.footer}>
+          <Text style={[styles.footerText, { color: colors.subText }]}>Locked with Encryption • WheelX v2.0.4</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -137,52 +165,141 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
-    height: 100,
+    height: verticalScale(110),
     backgroundColor: "#e53935",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: verticalScale(20),
+    borderBottomLeftRadius: moderateScale(32),
+    borderBottomRightRadius: moderateScale(32),
+  },
+  logo: { width: scale(120), height: scale(60) },
+  content: { padding: moderateScale(20), paddingBottom: verticalScale(40) },
+  profileCard: {
+    borderRadius: moderateScale(24),
+    padding: moderateScale(24),
+    marginBottom: verticalScale(24),
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: verticalScale(4) },
+    shadowOpacity: 0.1,
+    shadowRadius: moderateScale(10),
+  },
+  profileInfoArea: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
   },
-  logo: { width: 120, height: 50 },
-  content: { padding: 16 },
-  profileBox: {
-    borderRadius: 16,
-    alignItems: "center",
-    paddingVertical: 24,
-    marginBottom: 24,
+  avatarWrapper: {
+    position: "relative",
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: scale(80),
+    height: scale(80),
+    borderRadius: scale(40),
     backgroundColor: "#e53935",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    borderWidth: 3,
+    borderColor: "rgba(229, 57, 53, 0.2)",
   },
-  name: { fontSize: 20, fontWeight: "700" },
-  email: { fontSize: 14, marginTop: 4 },
-  card: { borderRadius: 16, overflow: "hidden" },
-  row: {
+  editAvatarIcon: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#e53935",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  profileTexts: {
+    marginLeft: scale(20),
+    flex: 1,
+  },
+  name: { fontSize: rf(24), fontWeight: "800" },
+  emailBadge: {
+    marginTop: verticalScale(4),
+    alignSelf: "flex-start",
+  },
+  email: { fontSize: rf(13), fontWeight: "500" },
+
+  sectionContainer: {
+    marginBottom: verticalScale(24),
+  },
+  sectionTitle: {
+    fontSize: rf(13),
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginBottom: verticalScale(12),
+    marginLeft: scale(4),
+    opacity: 0.8,
+  },
+  menuCard: {
+    borderRadius: moderateScale(20),
+    overflow: "hidden",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: verticalScale(2) },
+    shadowOpacity: 0.05,
+    shadowRadius: moderateScale(5),
+  },
+  menuRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 18,
-    borderBottomWidth: 1,
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(16),
   },
-  rowLeft: { flexDirection: "row", alignItems: "center", gap: 12 },
-  rowText: { fontSize: 16, fontWeight: "500" },
-  logoutBtn: {
-    marginTop: 32,
-    backgroundColor: "#e53935",
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
+  rowLeft: {
     flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
+    alignItems: "center",
   },
-  logoutText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  iconBox: {
+    width: scale(38),
+    height: scale(38),
+    borderRadius: moderateScale(12),
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: scale(16),
+  },
+  rowText: {
+    fontSize: rf(16),
+    fontWeight: "600",
+  },
+  divider: {
+    height: 1,
+    marginHorizontal: 20,
+    opacity: 0.5,
+  },
+  logoutBtn: {
+    marginTop: verticalScale(10),
+    backgroundColor: "#e53935",
+    height: verticalScale(56),
+    borderRadius: moderateScale(18),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+    shadowColor: "#e53935",
+    shadowOffset: { width: 0, height: verticalScale(4) },
+    shadowOpacity: 0.3,
+    shadowRadius: moderateScale(8),
+  },
+  logoutIconBox: {
+    marginRight: scale(12),
+  },
+  logoutText: { color: "#fff", fontSize: rf(18), fontWeight: "800" },
+  footer: {
+    marginTop: 30,
+    alignItems: "center",
+  },
+  footerText: {
+    fontSize: 12,
+    fontWeight: "600",
+    opacity: 0.5,
+  },
 });

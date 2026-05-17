@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -18,7 +18,7 @@
       "bundleIdentifier": "com.wheelx.app"
     },
     "android": {
-      "package": "com.wheelx.app",
+      "package": "com.apurvabera.wheelx",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -34,7 +34,14 @@
     },
     "owner": "apurvabera",
     "plugins": [
-      "expo-web-browser"
-    ]
+      "expo-web-browser",
+      "expo-font"
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2441db3b-6dee-46fe-8408-5f0811c4f345"
+    }
   }
 }
